@@ -8,12 +8,12 @@ Main.py overdue for an overhaul! Let's see.
 import todoist
 import requests
 import json
-from hab_task import HabTask
-from todo_task import TodTask
+from .hab_task import HabTask
+from .todo_task import TodTask
 import os
 import logging
 try:
-    import ConfigParser as configparser
+    import configparser as configparser
 except:
     import configparser	
 from datetime import datetime
@@ -243,12 +243,12 @@ def get_uniqs(matchDict,tod_tasks,hab_tasks):
     for tod in tod_tasks:
         tid = tod.id
         if tod.complete == 0:
-            if tid not in matchDict.keys():
+            if tid not in list(matchDict.keys()):
                 tod_uniq.append(tod)
     
     for hab in hab_tasks:
         tid = int(hab.alias)
-        if tid not in matchDict.keys():
+        if tid not in list(matchDict.keys()):
             hab_uniq.append(hab)
     
     return tod_uniq, hab_uniq
@@ -301,22 +301,22 @@ def update_tod_matchDict(tod_tasks, matchDict):
     tid_list = []
     for tod in tod_tasks:
         tid_list.append(tod.id)
-        if tod.id in matchDict.keys():
+        if tod.id in list(matchDict.keys()):
             matchDict[tod.id]['tod'] = tod
-    for tid in matchDict.keys():
+    for tid in list(matchDict.keys()):
         if tid not in tid_list:
             matchDict.pop(tid)
             
     return matchDict
 
 def update_hab_matchDict(hab_tasks, matchDict):
-    from main import delete_hab
+    from .main import delete_hab
     tid_list = []
     for hab in hab_tasks: 
-        if 'alias' in hab.task_dict.keys():
+        if 'alias' in list(hab.task_dict.keys()):
             tid = int(hab.alias)
             tid_list.append(tid)
-            if tid in matchDict.keys():
+            if tid in list(matchDict.keys()):
                 matchDict[tid]['hab'] = hab        
     expired_tids = []
     for tid in matchDict:
@@ -371,15 +371,15 @@ def check_matchDict(matchDict):
             elif t.completed == True:
                 print("hab done, tod undone")
             else: 
-                print("something is wroooong check hab %s" % t)
+                print(("something is wroooong check hab %s" % t))
         elif matchDict[t].complete == 1:
             if t.completed == False:
                 print("hab undone, tod done")
-                print(t.name)
+                print((t.name))
             elif t.completed == True:
                 print("both done")
             else:
-                print("something is weird check hab %s" % t)
+                print(("something is weird check hab %s" % t))
         else:
-            print("something is weird check tod %s" % t)
+            print(("something is weird check tod %s" % t))
 

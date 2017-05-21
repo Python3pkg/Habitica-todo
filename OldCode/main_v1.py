@@ -25,7 +25,7 @@ from hab_task import HabTask
 from todo_task import TodTask
 
 try:
-    import ConfigParser as configparser
+    import configparser as configparser
 except:
     import configparser	
 	
@@ -184,7 +184,7 @@ def update_quest_cache(configfile, **kwargs):
 
     cache = load_cache(configfile)
 
-    for key, val in kwargs.items():
+    for key, val in list(kwargs.items()):
         cache.set(SECTION_CACHE_QUEST, key, val)
 
     with open(configfile, 'wb') as f:
@@ -209,7 +209,7 @@ def get_task_ids(tids):
         for bit in raw_arg.split(','):
             if '-' in bit:
                 start, stop = [int(e) for e in bit.split('-')]
-                task_ids.extend(range(start, stop + 1))
+                task_ids.extend(list(range(start, stop + 1)))
             else:
                 task_ids.append(int(bit))
     return [e - 1 for e in set(task_ids)]
@@ -224,7 +224,7 @@ def updated_task_list(tasks, tids):
 def print_task_list(tasks):
     for i, task in enumerate(tasks):
         completed = 'x' if task['completed'] else ' '
-        print('[%s] %s %s' % (completed, i + 1, task['text'].encode('utf8')))
+        print(('[%s] %s %s' % (completed, i + 1, task['text'].encode('utf8'))))
 
 
 def qualitative_task_score_from_value(value):
@@ -277,7 +277,7 @@ def cli():
 		return
 
 	logging.debug('Command line args: {%s}' %
-				  ', '.join("'%s': '%s'" % (k, v) for k, v in args.items()))
+				  ', '.join("'%s': '%s'" % (k, v) for k, v in list(args.items())))
 
 	# Set up auth
 	auth = load_auth(AUTH_CONF)
@@ -302,7 +302,7 @@ def server():
 def home():
 	auth, hbt = main.get_started('auth.cfg')
 	home_url = '%s%s' % (auth['url'], HABITICA_TASKS_PAGE)
-	print('Opening %s' % home_url)
+	print(('Opening %s' % home_url))
 	open_new_tab(home_url)
 
     # GET user
@@ -340,7 +340,7 @@ def status(hbt):
 			if content.get('quests', {}).get(quest_key, {}).get('collect'):
 				logging.debug("\tOn a collection type of quest")
 				quest_type = 'collect'
-				clct = content['quests'][quest_key]['collect'].values()[0]
+				clct = list(content['quests'][quest_key]['collect'].values())[0]
 				quest_max = clct['count']
 			# else if it's a boss, then hit up
 			# content/quests/<quest_key>/boss/hp
@@ -360,7 +360,7 @@ def status(hbt):
 		quest_type = cache.get(SECTION_CACHE_QUEST, 'quest_type')
 		if quest_type == 'collect':
 			qp_tmp = party['quest']['progress']['collect']
-			quest_progress = qp_tmp.values()[0]['count']
+			quest_progress = list(qp_tmp.values())[0]['count']
 		else:
 			quest_progress = party['quest']['progress']['hp']
 
@@ -378,16 +378,16 @@ def status(hbt):
 	pet = '%s (%d food items)' % (currentPet, food_count)
 	mount = items.get('currentMount', '')
 	summary_items = ('health', 'xp', 'mana', 'quest', 'pet', 'mount')
-	len_ljust = max(map(len, summary_items)) + 1
-	print('-' * len(title))
+	len_ljust = max(list(map(len, summary_items))) + 1
+	print(('-' * len(title)))
 	print(title)
-	print('-' * len(title))
-	print('%s %s' % ('Health:'.rjust(len_ljust, ' '), health))
-	print('%s %s' % ('XP:'.rjust(len_ljust, ' '), xp))
-	print('%s %s' % ('Mana:'.rjust(len_ljust, ' '), mana))
-	print('%s %s' % ('Pet:'.rjust(len_ljust, ' '), pet))
-	print('%s %s' % ('Mount:'.rjust(len_ljust, ' '), mount))
-	print('%s %s' % ('Quest:'.rjust(len_ljust, ' '), quest))
+	print(('-' * len(title)))
+	print(('%s %s' % ('Health:'.rjust(len_ljust, ' '), health)))
+	print(('%s %s' % ('XP:'.rjust(len_ljust, ' '), xp)))
+	print(('%s %s' % ('Mana:'.rjust(len_ljust, ' '), mana)))
+	print(('%s %s' % ('Pet:'.rjust(len_ljust, ' '), pet)))
+	print(('%s %s' % ('Mount:'.rjust(len_ljust, ' '), mount)))
+	print(('%s %s' % ('Quest:'.rjust(len_ljust, ' '), quest)))
 
     # GET/POST habits
 def habit():
@@ -398,8 +398,8 @@ def habit():
 			tval = habits[tid]['value']
 			hbt.user.tasks(_id=habits[tid]['id'],
 						   _direction='up', _method='post')
-			print('incremented task \'%s\''
-				  % habits[tid]['text'].encode('utf8'))
+			print(('incremented task \'%s\''
+				  % habits[tid]['text'].encode('utf8')))
 			habits[tid]['value'] = tval + (TASK_VALUE_BASE ** tval)
 			sleep(HABITICA_REQUEST_WAIT_TIME)
 	elif 'down' in args['<args>']:
@@ -408,13 +408,13 @@ def habit():
 			tval = habits[tid]['value']
 			hbt.user.tasks(_id=habits[tid]['id'],
 						   _direction='down', _method='post')
-			print('decremented task \'%s\''
-				  % habits[tid]['text'].encode('utf8'))
+			print(('decremented task \'%s\''
+				  % habits[tid]['text'].encode('utf8')))
 			habits[tid]['value'] = tval - (TASK_VALUE_BASE ** tval)
 			sleep(HABITICA_REQUEST_WAIT_TIME)
 	for i, task in enumerate(habits):
 		score = qualitative_task_score_from_value(task['value'])
-		print('[%s] %s %s' % (score, i + 1, task['text'].encode('utf8')))
+		print(('[%s] %s %s' % (score, i + 1, task['text'].encode('utf8'))))
 
     # GET/PUT tasks:daily
 def daily(): 
@@ -424,8 +424,8 @@ def daily():
 		for tid in tids:
 			hbt.user.tasks(_id=dailies[tid]['id'],
 						   _direction='up', _method='post')
-			print('marked daily \'%s\' completed'
-				  % dailies[tid]['text'].encode('utf8'))
+			print(('marked daily \'%s\' completed'
+				  % dailies[tid]['text'].encode('utf8')))
 			dailies[tid]['completed'] = True
 			sleep(HABITICA_REQUEST_WAIT_TIME)
 	elif 'undo' in args['<args>']:
@@ -433,8 +433,8 @@ def daily():
 		for tid in tids:
 			hbt.user.tasks(_id=dailies[tid]['id'],
 						   _method='put', completed=False)
-			print('marked daily \'%s\' incomplete'
-				  % dailies[tid]['text'].encode('utf8'))
+			print(('marked daily \'%s\' incomplete'
+				  % dailies[tid]['text'].encode('utf8')))
 			dailies[tid]['completed'] = False
 			sleep(HABITICA_REQUEST_WAIT_TIME)
 	print_task_list(dailies)
@@ -448,8 +448,8 @@ def todo():
 		for tid in tids:
 			hbt.user.tasks(_id=todos[tid]['id'],
 						   _direction='up', _method='post')
-			print('marked todo \'%s\' complete'
-				  % todos[tid]['text'].encode('utf8'))
+			print(('marked todo \'%s\' complete'
+				  % todos[tid]['text'].encode('utf8')))
 			sleep(HABITICA_REQUEST_WAIT_TIME)
 		todos = updated_task_list(todos, tids)
 	elif 'add' in args['<args>']:
@@ -459,5 +459,5 @@ def todo():
 					   priority=PRIORITY[args['--difficulty']],
 					   _method='post')
 		todos.insert(0, {'completed': False, 'text': ttext})
-		print('added new todo \'%s\'' % ttext.encode('utf8'))
+		print(('added new todo \'%s\'' % ttext.encode('utf8')))
 	print_task_list(todos)

@@ -10,11 +10,11 @@ import requests
 import scriptabit
 import pickle
 import todoist
-import main
+from . import main
 import random
 import json
-from hab_task import HabTask
-from todo_task import TodTask
+from .hab_task import HabTask
+from .todo_task import TodTask
 from datetime import datetime
 from dateutil import parser
 
@@ -67,7 +67,7 @@ for hab in hab_uniq:
     try:
         tod = TodTask(tod_items.get_by_id(tid).data)
     except:
-        print(hab.name)
+        print((hab.name))
         continue
     matchDict[tid]['tod'] = tod
     matchDict[tid]['recurs'] = tod.recurring
@@ -82,13 +82,13 @@ for hab in hab_uniq:
 #Okay, so what if there are two matched tasks in the two uniq lists that really should be paired?
 for tod_task in tod_uniq:
     tid = tod_task.id
-    if tid not in matchDict.keys():
+    if tid not in list(matchDict.keys()):
         for hab_task in hab_uniq:
             if tod_task.name == hab_task.name:
                 matchDict[tid] = {}
                 r = main.add_hab_id(tid,hab_task)
                 if r.ok == False:
-                    print("Error updating hab %s! %s" % (hab.name,r.reason))
+                    print(("Error updating hab %s! %s" % (hab.name,r.reason)))
                 else:
                     matchDict[tid]['hab'] = hab_task
                     matchDict[tid]['tod'] = tod_task
@@ -104,7 +104,7 @@ for tod in tod_uniq:
         new_hab = main.make_hab_from_tod(tod)
     newDict = new_hab.task_dict
     r = main.write_hab_task(newDict)
-    print("Added hab to %s!" % tod.name)
+    print(("Added hab to %s!" % tod.name))
     print(r)
     if r.ok == False:
         fin_hab = main.get_hab_fromID(tid)
@@ -126,7 +126,7 @@ for tid in matchDict:
                     r = main.update_hab(matched_hab)
                 elif tod.dueToday == 'No':
                     r = main.complete_hab(hab)
-                    print('Completed daily hab %s' % hab.name)
+                    print(('Completed daily hab %s' % hab.name))
                     print(r)
                 else:
                     print("error in daily Hab")
@@ -134,7 +134,7 @@ for tid in matchDict:
                 if tod.dueToday == 'Yes':
                     fix_tod = tod_user.items.get_by_id(tid)
 #                    fix_tod.close()
-                    print('fix the tod! TID %s, NAMED %s' %(tid, tod.name))
+                    print(('fix the tod! TID %s, NAMED %s' %(tid, tod.name)))
                 elif tod.dueToday == 'No':
                     continue
                 else:
@@ -147,10 +147,10 @@ for tid in matchDict:
                     if tod.dueToday == 'No':
                         r = main.complete_hab(hab)
                         if r.ok == True:
-                            print('Completed hab %s' % hab.name)
+                            print(('Completed hab %s' % hab.name))
                         else:
-                            print('check hab ID %s' %tid)
-                            print(r.reason)
+                            print(('check hab ID %s' %tid))
+                            print((r.reason))
                         matchDict[tid]['duelast'] = 'No'
         else:
             print("error, check hab daily")
@@ -166,25 +166,25 @@ for tid in matchDict:
             elif hab.completed == True:
                 fix_tod = tod_user.items.get_by_id(tid)
                 fix_tod.close()
-                print('completed tod %s' % tod.name)
+                print(('completed tod %s' % tod.name))
             else: 
-                print("ERROR: check HAB %s" % tid)
+                print(("ERROR: check HAB %s" % tid))
                 #matchDict.pop(tid)
         elif tod.complete == 1:
             if hab.completed == False:
                 r = main.complete_hab(hab)
                 print(r)
                 if r.ok == True:
-                    print('Completed hab %s' % hab.name)
+                    print(('Completed hab %s' % hab.name))
                 else:
-                    print('check hab ID %s' %tid)
-                    print(r.reason)
+                    print(('check hab ID %s' %tid))
+                    print((r.reason))
             elif hab.completed == True:
                 continue
             else: 
-                print("ERROR: check HAB %s" % tid)
+                print(("ERROR: check HAB %s" % tid))
         else:
-            print("ERROR: check TOD %s" % tid)
+            print(("ERROR: check TOD %s" % tid))
     
     r = []
     try: 

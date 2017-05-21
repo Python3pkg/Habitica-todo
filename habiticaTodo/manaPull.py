@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import requests
 import json
-from hab_task import HabTask
+from .hab_task import HabTask
 import os
-import main
+from . import main
 
 try:
-    import ConfigParser as configparser
+    import configparser as configparser
 except:
     import configparser	
 
@@ -27,7 +27,7 @@ def get_user_info(auth):
     return userData
 
 def get_user_mana(auth):
-    from manaPull import get_user_info
+    from .manaPull import get_user_info
     userData = get_user_info(auth)
     mana = userData['stats']['mp']
     return mana
@@ -41,9 +41,9 @@ def cast_skill(auth, skill):
     return r
 
 def cast_all_mana(auth, skill):
-    from manaPull import get_user_mana
-    from manaPull import skillCost
-    from manaPull import cast_skill
+    from .manaPull import get_user_mana
+    from .manaPull import skillCost
+    from .manaPull import cast_skill
     import requests
     import json
     import time

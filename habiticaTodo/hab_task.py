@@ -13,8 +13,8 @@ from datetime import datetime
 from tzlocal import get_localzone
 import time
 
-from dates import parse_date_utc
-from task import CharacterAttribute, ChecklistItem, Difficulty, Task
+from .dates import parse_date_utc
+from .task import CharacterAttribute, ChecklistItem, Difficulty, Task
 
 class HabTask(object):
     def __init__(self, task_dict=None):
@@ -44,7 +44,7 @@ class HabTask(object):
         # We also need separate API calls for deleted, added, and updated
         # checklist items items
         self.new_checklist_items = []
-        if 'checklist' in task_dict.keys():
+        if 'checklist' in list(task_dict.keys()):
             self.existing_checklist_items = task_dict['checklist']
             del task_dict['checklist']
         else:

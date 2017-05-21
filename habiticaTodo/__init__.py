@@ -5,4 +5,4 @@
 
 from .main import *
 
-import oneWaySync
+from . import oneWaySync

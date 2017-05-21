@@ -12,7 +12,7 @@ import json
 import os
 import logging
 try:
-    import ConfigParser as configparser
+    import configparser as configparser
 except:
     import configparser	
 
@@ -176,7 +176,7 @@ def get_uniqs(matchDict,tod_tasks,hab_tasks):
             alias = int(task['alias'])
         except:
             alias = ''
-        if alias in matchDict.keys():
+        if alias in list(matchDict.keys()):
                 hab_u.remove(task)
     return tod_u, hab_u
 
@@ -205,16 +205,16 @@ def add_hab_id(tid,hab):
     
 def update_tod_matchDict(tod_tasks, matchDict):
     for tod in tod_tasks:
-        if tod['id'] in matchDict.keys():
+        if tod['id'] in list(matchDict.keys()):
             matchDict[tod['id']]['tod'] = tod
         else:
             pass
 
 def update_hab_matchDict(hab_tasks, matchDict):
     for hab in hab_tasks: 
-        if 'alias' in hab.keys():
+        if 'alias' in list(hab.keys()):
             tid = int(hab['alias'])
-            if tid in matchDict.keys():
+            if tid in list(matchDict.keys()):
                 matchDict[tid]['hab'] = hab
         else:
             pass
@@ -279,7 +279,7 @@ def check_matchDict(matchDict):
         elif matchDict[t].complete == 1:
             if t.completed == False:
                 print("hab undone, tod done")
-                print(t.name)
+                print((t.name))
             elif t.completed == True:
                 print("both done")
             else:

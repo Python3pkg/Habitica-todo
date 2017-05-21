@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import requests
 import json
-from hab_task import HabTask
+from .hab_task import HabTask
 import os
-import main
-import manaPull
+from . import main
+from . import manaPull
 
 auth = main.get_started('auth.cfg')
 
